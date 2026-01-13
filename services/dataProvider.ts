@@ -4,7 +4,8 @@ import * as supabaseService from './supabaseService';
 import { ClientData, OrderHistory, MessageTemplate } from '../types';
 
 // Determine source based on Environment Variable (Vite standard)
-const DATA_SOURCE = import.meta.env.VITE_DATA_SOURCE === 'supabase' ? 'supabase' : 'google';
+// Use optional chaining to prevent crash if import.meta.env is undefined
+const DATA_SOURCE = import.meta.env?.VITE_DATA_SOURCE === 'supabase' ? 'supabase' : 'google';
 
 console.log(`[DataProvider] Active Data Source: ${DATA_SOURCE.toUpperCase()}`);
 
