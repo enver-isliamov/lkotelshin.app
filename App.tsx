@@ -81,8 +81,8 @@ const demoOrderHistory: OrderHistory[] = [
     },
 ];
 
-// Check environment variable for data source
-const isSupabase = process.env.REACT_APP_DATA_SOURCE === 'supabase';
+// Check environment variable for data source (Vite style)
+const isSupabase = import.meta.env.VITE_DATA_SOURCE === 'supabase';
 
 const App: React.FC = () => {
   const [clientData, setClientData] = useState<ClientData | null>(null);

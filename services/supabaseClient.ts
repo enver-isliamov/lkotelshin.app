@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 // Initialize the client only if the URL and Key are provided.
 // Otherwise, export a Proxy that throws an error only if the client is accessed.
@@ -15,7 +15,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
         
         throw new Error(
           'Supabase client is not initialized. ' +
-          'If you want to use Supabase, set NEXT_PUBLIC_DATA_SOURCE=supabase and ensure NEXT_PUBLIC_SUPABASE_URL/ANON_KEY are set in Vercel.'
+          'If you want to use Supabase, set VITE_DATA_SOURCE=supabase and ensure VITE_SUPABASE_URL/ANON_KEY are set.'
         );
       },
     });

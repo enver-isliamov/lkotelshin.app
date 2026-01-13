@@ -3,8 +3,8 @@ import * as googleService from './googleSheetService';
 import * as supabaseService from './supabaseService';
 import { ClientData, OrderHistory, MessageTemplate } from '../types';
 
-// Determine source based on Environment Variable mapped during build
-const DATA_SOURCE = process.env.REACT_APP_DATA_SOURCE === 'supabase' ? 'supabase' : 'google';
+// Determine source based on Environment Variable (Vite standard)
+const DATA_SOURCE = import.meta.env.VITE_DATA_SOURCE === 'supabase' ? 'supabase' : 'google';
 
 console.log(`[DataProvider] Active Data Source: ${DATA_SOURCE.toUpperCase()}`);
 
