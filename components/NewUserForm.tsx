@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { AsYouType, isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
 interface NewUserFormProps {
   chatId: string;
@@ -48,15 +49,19 @@ const NewUserForm: React.FC<NewUserFormProps> = ({ chatId, onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanPhone = phone.replace(/\D/g, '');
-    if (cleanPhone.length < 10 || cleanPhone.length > 15) {
-      setError('Пожалуйста, введите корректный номер');
+    
+    if (!isValidPhoneNumber(phone, 'RU')) {
+      setError('Пожалуйста, введите корректный номер телефона');
       return;
     }
+
+    const phoneNumber = parsePhoneNumber(phone, 'RU');
+    const e164Phone = phoneNumber.format('E.164');
+
     setError('');
     setStatus('submitting');
     try {
-      await onSubmit(phone);
+      await onSubmit(e164Phone);
       setStatus('success');
     } catch (err) {
       setStatus('error');
@@ -216,23 +221,22 @@ const NewUserForm: React.FC<NewUserFormProps> = ({ chatId, onSubmit }) => {
                 <form onSubmit={handleSubmit} className="space-y-3">
                     <div className="relative group">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                             <span className="text-tg-hint group-focus-within:text-tg-link transition-colors">🇷🇺 +7</span>
+                             <span className="text-tg-hint group-focus-within:text-tg-link transition-colors text-xl">🇷🇺</span>
                         </div>
                         <input
                         type="tel"
                         value={phone}
                         onChange={(e) => {
-                            // Форматирование на лету (простое)
-                            const val = e.target.value.replace(/^(\+7|8)/, '').replace(/\D/g, '');
-                            setPhone(val);
+                            const formatter = new AsYouType('RU');
+                            setPhone(formatter.input(e.target.value));
                         }}
-                        placeholder="(999) 000-00-00"
-                        className={`w-full pl-20 pr-4 py-4 bg-tg-bg border-2 rounded-2xl text-xl font-bold tracking-wide text-tg-text placeholder-tg-hint/30 focus:outline-none transition-all
+                        placeholder="+7 999 000 00 00"
+                        className={`w-full pl-12 pr-4 py-4 bg-tg-bg border-2 rounded-2xl text-xl font-bold tracking-wide text-tg-text placeholder-tg-hint/30 focus:outline-none transition-all
                             ${error 
                             ? 'border-red-500/50 focus:border-red-500 focus:ring-4 focus:ring-red-500/10' 
                             : 'border-transparent focus:border-tg-link focus:ring-4 focus:ring-tg-link/10'
                             }`}
-                        inputMode="numeric"
+                        inputMode="tel"
                         />
                     </div>
 
@@ -246,7 +250,7 @@ const NewUserForm: React.FC<NewUserFormProps> = ({ chatId, onSubmit }) => {
 
                     <button 
                         type="submit" 
-                        disabled={status === 'submitting' || phone.length < 10}
+                        disabled={status === 'submitting' || phone.length < 11}
                         className="w-full bg-tg-button text-tg-button-text font-bold text-lg py-4 rounded-2xl shadow-lg shadow-tg-button/30 hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         {status === 'submitting' ? 'Входим...' : 'Войти'}
